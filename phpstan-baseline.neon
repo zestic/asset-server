@@ -1,0 +1,55 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method Test\\Integration\\AuthenticationFlowTest\:\:ensureTestUserExists\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: tests/Integration/AuthenticationFlowTest.php
+
+		-
+			message: '#^Method Test\\Integration\\AuthenticationFlowTest\:\:extractAuthCodeFromRedirect\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: tests/Integration/AuthenticationFlowTest.php
+
+		-
+			message: '#^Method Test\\Integration\\AuthenticationFlowTest\:\:extractTokenFromRedirect\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: tests/Integration/AuthenticationFlowTest.php
+
+		-
+			message: '#^Method Test\\Integration\\AuthenticationFlowTest\:\:findMagicLinkInEmail\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: tests/Integration/AuthenticationFlowTest.php
+
+		-
+			message: '#^Method Test\\Integration\\AuthenticationFlowTest\:\:getEmailsFromMailHog\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: tests/Integration/AuthenticationFlowTest.php
+
+		-
+			message: '#^Method Test\\Integration\\AuthenticationFlowTest\:\:getLoginTokenFromMailHog\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: tests/Integration/AuthenticationFlowTest.php
+
+		-
+			message: '#^Property Test\\Integration\\AuthenticationFlowTest\:\:\$accessToken is unused\.$#'
+			identifier: property.unused
+			count: 1
+			path: tests/Integration/AuthenticationFlowTest.php
+
+		-
+			message: '#^Property Test\\Integration\\AuthenticationFlowTest\:\:\$refreshToken is unused\.$#'
+			identifier: property.unused
+			count: 1
+			path: tests/Integration/AuthenticationFlowTest.php
+
+		-
+			message: '#^Property Test\\Integration\\AuthenticationFlowTest\:\:\$testUser is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: tests/Integration/AuthenticationFlowTest.php

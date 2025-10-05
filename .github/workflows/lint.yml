@@ -1,0 +1,83 @@
+name: Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: zestic_api
+          POSTGRES_USER: zestic
+          POSTGRES_PASSWORD: password1
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: zestic_api
+      DB_USER: zestic
+      DB_PASSWORD: password1
+      DB_SCHEMA: public
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -f docker/frankenphp/Dockerfile.frankenphp -t admin-api .
+
+      - name: Install Dependencies
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -e DB_HOST=localhost \
+            -e DB_PORT=5432 \
+            -e DB_NAME=zestic_api \
+            -e DB_USER=zestic \
+            -e DB_PASSWORD=password1 \
+            -e DB_SCHEMA=public \
+            admin-api \
+            sh -c "git config --global --add safe.directory /app && composer install --no-interaction"
+
+      - name: Code Style Check
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -e DB_HOST=localhost \
+            -e DB_PORT=5432 \
+            -e DB_NAME=zestic_api \
+            -e DB_USER=zestic \
+            -e DB_PASSWORD=password1 \
+            -e DB_SCHEMA=public \
+            admin-api \
+            sh -c "git config --global --add safe.directory /app && ./vendor/bin/phpcs --parallel=1"
+
+      - name: Static Analysis
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -e DB_HOST=localhost \
+            -e DB_PORT=5432 \
+            -e DB_NAME=zestic_api \
+            -e DB_USER=zestic \
+            -e DB_PASSWORD=password1 \
+            -e DB_SCHEMA=public \
+            admin-api \
+            sh -c "git config --global --add safe.directory /app && ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress"
+
+      - name: Security Check
+        uses: symfonycorp/security-checker-action@v5

@@ -1,0 +1,20 @@
+{
+    # Development watcher (controlled by environment)
+    {$FRANKENPHP_CONFIG}
+}
+
+{$SERVER_NAME} {
+    root * /app/public
+    encode gzip
+
+    # PHP application handler
+    php_server
+
+    # Static files
+    file_server
+
+    log {
+        output stdout
+        format console
+    }
+}

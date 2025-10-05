@@ -1,0 +1,90 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: zestic_api_test
+          POSTGRES_USER: zestic
+          POSTGRES_PASSWORD: password1
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -f docker/frankenphp/Dockerfile.frankenphp -t admin-api .
+
+      - name: Install Dependencies
+        run: |
+          docker run --rm \
+            --network host \
+            -v ${{ github.workspace }}:/app \
+            -e DB_HOST=localhost \
+            -e DB_PORT=5432 \
+            -e DB_NAME=zestic_api_test \
+            -e DB_USER=zestic \
+            -e DB_PASSWORD=password1 \
+            -e DB_SCHEMA=public \
+            admin-api \
+            sh -c "git config --global --add safe.directory /app && composer install --no-interaction"
+
+      - name: Run Database Migrations
+        run: |
+          docker run --rm \
+            --network host \
+            -v ${{ github.workspace }}:/app \
+            -e DB_HOST=localhost \
+            -e DB_PORT=5432 \
+            -e DB_NAME=zestic_api_test \
+            -e DB_USER=zestic \
+            -e DB_PASSWORD=password1 \
+            -e DB_SCHEMA=public \
+            admin-api \
+            sh -c "git config --global --add safe.directory /app && ./vendor/bin/phinx migrate -e testing"
+
+      - name: Run Tests
+        run: |
+          docker run --rm \
+            --network host \
+            -v ${{ github.workspace }}:/app \
+            -e DB_HOST=localhost \
+            -e DB_PORT=5432 \
+            -e DB_NAME=zestic_api_test \
+            -e DB_USER=zestic \
+            -e DB_PASSWORD=password1 \
+            -e DB_SCHEMA=public \
+            admin-api \
+            sh -c "git config --global --add safe.directory /app && ./vendor/bin/phpunit --colors=always --testsuite=all"
+
+      - name: Upload Coverage Report
+        if: success()
+        run: |
+          docker run --rm \
+            --network host \
+            -v ${{ github.workspace }}:/app \
+            -e DB_HOST=localhost \
+            -e DB_PORT=5432 \
+            -e DB_NAME=zestic_api_test \
+            -e DB_USER=zestic \
+            -e DB_PASSWORD=password1 \
+            -e DB_SCHEMA=public \
+            admin-api \
+            sh -c "git config --global --add safe.directory /app && ./vendor/bin/phpunit --coverage-clover clover.xml"

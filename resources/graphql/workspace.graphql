@@ -1,0 +1,18 @@
+type Query {
+    getWorkspaceById(id: ID!): WorkspaceResponse!
+}
+
+type Mutation {
+    createWorkspace(name: String!): WorkspaceResponse!
+}
+
+type Workspace {
+    id: ID!
+    name: String!
+}
+
+type WorkspaceResponse {
+  success: Boolean!
+  message: String!
+  data: Workspace
+}

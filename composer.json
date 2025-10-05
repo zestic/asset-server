@@ -1,0 +1,161 @@
+{
+    "name": "zestic/api-template",
+    "description": "Production-ready GraphQL API template with authentication, database migrations, and modern PHP tooling",
+    "type": "project",
+    "license": "Apache-2.0",
+    "keywords": [
+        "api",
+        "graphql",
+        "template",
+        "mezzio",
+        "php",
+        "oauth2",
+        "authentication",
+        "postgresql",
+        "frankenphp",
+        "docker"
+    ],
+    "homepage": "https://github.com/zestic/api-template",
+    "support": {
+        "issues": "https://github.com/zestic/api-template/issues",
+        "source": "https://github.com/zestic/api-template"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:zestic/api-template.git"
+        }
+    ],
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "laminas/laminas-component-installer": true,
+            "xaddax/webonyx-psr15-middleware": true
+        }
+    },
+    "require": {
+        "php": "^8.4",
+        "ext-intl": "*",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "actiophp/actio": "dev-main",
+        "adriengras/pkce-php": "*",
+        "composer/package-versions-deprecated": "^1.11.99.5",
+        "doctrine/dbal": "^3.6",
+        "ecodev/graphql-upload": "dev-master",
+        "laminas/laminas-component-installer": "^3.5",
+        "laminas/laminas-config-aggregator": "^1.18",
+        "laminas/laminas-diactoros": "^3.6",
+        "laminas/laminas-servicemanager": "^4.0",
+        "laminas/laminas-stdlib": "^3.20",
+        "league/flysystem": "^2.0",
+        "league/flysystem-aws-s3-v3": "^2.0",
+        "league/mime-type-detection": "^1.13",
+        "mezzio/mezzio": "^3.20.1",
+        "mezzio/mezzio-cors": "^1.0",
+        "mezzio/mezzio-fastroute": "^3.11.0",
+        "mezzio/mezzio-helpers": "^5.17",
+        "middlewares/access-log": "*",
+        "middlewares/uuid": "*",
+        "monolog/monolog": "*",
+        "nesbot/carbon": "^3.0",
+        "ramsey/uuid": "^4.7",
+        "symfony/messenger": "^7.2",
+        "xaddax/webonyx-middleware-component": "dev-main",
+        "xaddax/webonyx-psr15-middleware": "^15.4.0",
+        "zestic/communication-component": "dev-main",
+        "zestic/flysystem2-component": "^v0.3.1",
+        "zestic/graphql-auth-component": "dev-main"
+    },
+    "require-dev": {
+        "filp/whoops": "^2.15.4",
+        "laminas/laminas-coding-standard": "~2.5.0",
+        "laminas/laminas-development-mode": "^3.13.0",
+        "league/flysystem-memory": "^3.13",
+        "mezzio/mezzio-tooling": "^2.10.1",
+        "phpstan/phpstan": "*",
+        "phpstan/phpstan-phpunit": "*",
+        "phpunit/phpunit": "^10.5.45",
+        "roave/security-advisories": "dev-master"
+    },
+    "conflict": {
+        "amphp/dns": "<2.4.0",
+        "amphp/socket": "<2.3.1",
+        "php-di/php-di": "<7.0.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Application\\": "src/Application/",
+            "Domain\\": "src/Domain/",
+            "Infrastructure\\": "src/Infrastructure/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Unit\\": "tests/Unit/",
+            "Integration\\": "tests/Integration/"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "clear-config-cache": "php bin/clear-config-cache.php",
+        "enable-codestandard": "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run",
+        "cs-check": "./vendor/bin/phpcs --parallel=1",
+        "cs-fix": "./vendor/bin/phpcbf --parallel=1",
+        "development-disable": "laminas-development-mode disable",
+        "development-enable": "laminas-development-mode enable",
+        "development-status": "laminas-development-mode status",
+        "generate:resolvers": "vendor/bin/generate-resolvers",
+        "generate:requests": "vendor/bin/generate-requests",
+        "migrate": "docker compose exec app-api vendor/bin/phinx migrate",
+        "migrate:status": "docker compose exec app-api vendor/bin/phinx status",
+        "migrate:rollback": "docker compose exec app-api vendor/bin/phinx rollback -e development",
+        "phpstan": "phpstan analyse --memory-limit=1G",
+        "phpstan:baseline": "phpstan analyse --generate-baseline",
+        "phpstan:clear-cache": "phpstan clear-result-cache",
+        "post-create-project-cmd": [
+            "@development-enable"
+        ],
+        "post-install-cmd": "@clear-config-cache",
+        "post-update-cmd": "@clear-config-cache",
+        "restart": "docker compose restart",
+        "seed": "docker compose exec app-api vendor/bin/phinx seed:run",
+        "seed:create": "docker compose exec app-api vendor/bin/phinx seed:create",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "docker compose up -d"
+        ],
+        "stop": "docker compose down",
+        "test": "docker compose exec app-api vendor/bin/phpunit --colors=always --testsuite=all",
+        "test:auth-e2e": "docker compose exec app-api vendor/bin/phpunit --colors=always --filter testHappyPathForNewUser tests/Integration/AuthenticationFlowTest.php",
+        "test:unit": "docker compose exec app-api vendor/bin/phpunit --colors=always --testsuite=unit",
+        "test:coverage": "docker compose exec app-api vendor/bin/phpunit --colors=always --coverage-clover clover.xml",
+        "test:integration": "docker compose exec app-api vendor/bin/phpunit --colors=always --testsuite=integration"
+    },
+    "scripts-descriptions": {
+        "clear-config-cache": "Clears merged config cache. Required for config changes to be applied.",
+        "cs-check": "Check coding standards using PHPCS from vendor with parallel processing disabled for reliability.",
+        "cs-fix": "Fix coding standards using PHPCBF from vendor with parallel processing disabled for reliability.",
+        "phpstan": "Run static analysis tool PHPStan.",
+        "phpstan:baseline": "Generate PHPStan baseline file.",
+        "phpstan:clear-cache": "Clear PHPStan result cache.",
+        "migrate": "Run database migrations with Phinx",
+        "migrate:status": "Check migration status with Phinx",
+        "migrate:rollback": "Rollback last migration with Phinx",
+        "restart": "Restart Docker containers",
+        "seed": "Run database seeds with Phinx",
+        "seed:create": "Create a new database seed with Phinx",
+        "serve": "Start the FrankenPHP development server with Docker Compose",
+        "stop": "Stop the Docker Compose services",
+        "test": "Run all tests (unit and integration) with PHPUnit",
+        "test:unit": "Run only unit tests with PHPUnit",
+        "test:integration": "Run only integration tests with PHPUnit",
+        "test:auth-e2e": "Run end-to-end authentication flow test with magic link OAuth2 integration"
+    }
+}

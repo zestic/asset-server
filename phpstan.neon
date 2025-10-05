@@ -1,0 +1,30 @@
+includes:
+    - phpstan-baseline.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - src
+        - tests
+        - config
+    excludePaths:
+        - vendor
+        - data/cache
+    tmpDir: .phpstan-cache
+    reportUnmatchedIgnoredErrors: false
+    
+    # Ignore mixed types in tests for flexibility
+    ignoreErrors:
+        - '#Parameter \#\d+ \$\w+ of method [^:]+::\w+\(\) expects [^,]+, mixed given\.#'
+        - '#Method [^:]+::\w+\(\) should return [^,]+, mixed returned\.#'
+        - '#Cannot call method \w+\(\) on mixed\.#'
+        - '#Access to an undefined property [^:]+::\$\w+\.#'
+        - path: tests/*
+          message: '#Call to an undefined method [^:]+::\w+\(\)\.#'
+        - path: tests/*
+          message: '#Parameter \#\d+ \$\w+ of method [^:]+::\w+\(\) expects [^,]+, mixed given\.#'
+        - path: tests/*
+          message: '#Method [^:]+::\w+\(\) should return [^,]+, mixed returned\.#'
+
+

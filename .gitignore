@@ -1,0 +1,28 @@
+/.phpcs-cache
+/.psalm-cache
+/.phpstan-cache
+/.phpunit.cache
+/clover.xml
+/coveralls-upload.json
+/phpunit.xml
+/vendor/
+
+# Docker
+.docker
+docker-compose.override.yml
+
+# Environment specific files
+/config/autoload/*.local.php
+/config/development.config.php
+/config/jwt
+
+# Database
+/data/db/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+.lh

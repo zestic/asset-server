@@ -1,0 +1,57 @@
+FROM dunglas/frankenphp:php8.4
+
+# Install system dependencies and PHP extensions
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    libicu-dev \
+    libxslt1-dev \
+    libxml2-dev \
+    git \
+    unzip \
+    curl \
+    && docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    intl \
+    xsl \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /app
+
+# Copy composer files first for better caching
+COPY composer.json composer.lock ./
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+# Copy application files
+COPY . .
+
+# Run composer scripts after copying all files
+RUN composer run-script post-install-cmd --no-dev || true
+
+# Copy FrankenPHP configuration
+COPY docker/frankenphp/Caddyfile /etc/caddy/Caddyfile
+
+# Copy PHP development configuration
+COPY docker/frankenphp/php-dev.ini /usr/local/etc/php/conf.d/99-dev.ini
+
+# Set proper permissions
+RUN chown -R www-data:www-data /app \
+    && chmod -R 755 /app
+
+# Expose ports
+EXPOSE 80 443
+
+# Disable health check for development (overrides base image health check)
+HEALTHCHECK NONE
+
+# Production health check (uncomment for production use)
+# HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+#     CMD curl -f http://localhost/health || exit 1
