@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace Unit\Application\Health;
 
 use Application\Health\HealthHandler;
+
+use function json_decode;
+
+use const JSON_THROW_ON_ERROR;
+
 use Laminas\Diactoros\Response\JsonResponse;
 use PDO;
 use PDOStatement;
@@ -13,10 +18,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
-use function json_decode;
 use function time;
-
-use const JSON_THROW_ON_ERROR;
 
 final class HealthHandlerTest extends TestCase
 {
@@ -27,8 +29,8 @@ final class HealthHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->container = $this->createMock(ContainerInterface::class);
-        $this->pdo       = $this->createMock(PDO::class);
-        $this->handler   = new HealthHandler($this->container);
+        $this->pdo = $this->createMock(PDO::class);
+        $this->handler = new HealthHandler($this->container);
     }
 
     public function testHealthCheckWithSuccessfulDatabaseConnection(): void
@@ -48,7 +50,7 @@ final class HealthHandlerTest extends TestCase
             ->with(PDO::class)
             ->willReturn($this->pdo);
 
-        $request  = $this->createMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
         $response = $this->handler->handle($request);
 
         self::assertInstanceOf(JsonResponse::class, $response);
@@ -72,7 +74,7 @@ final class HealthHandlerTest extends TestCase
             ->with(PDO::class)
             ->willThrowException(new RuntimeException('Connection failed'));
 
-        $request  = $this->createMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
         $response = $this->handler->handle($request);
 
         self::assertInstanceOf(JsonResponse::class, $response);
@@ -105,7 +107,7 @@ final class HealthHandlerTest extends TestCase
             ->with(PDO::class)
             ->willReturn($this->pdo);
 
-        $request  = $this->createMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
         $response = $this->handler->handle($request);
 
         self::assertInstanceOf(JsonResponse::class, $response);

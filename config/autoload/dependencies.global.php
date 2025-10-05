@@ -2,24 +2,25 @@
 
 declare(strict_types=1);
 
-use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
-
 return [
+    // Provides application-wide services.
+    // We recommend using fully-qualified class names whenever possible as
+    // service names.
     'dependencies' => [
-        'abstract_factories' => [
-            ReflectionBasedAbstractFactory::class,
+        // Use 'aliases' to alias a service name to another service. The
+        // key is the alias name, the value is the service to which it points.
+        'aliases' => [
+            // Fully\Qualified\ClassOrInterfaceName::class => Fully\Qualified\ClassName::class,
         ],
-        'aliases'            => [
-            Domain\Profile\Repository\ProfileRepositoryInterface::class
-                => Infrastructure\Profile\ProfileRepository::class,
-            Zestic\GraphQL\AuthComponent\Contract\UserCreatedHookInterface::class
-                => Domain\User\Interactor\UserRegistration::class,
+        // Use 'invokables' for constructor-less services, or services that do
+        // not require arguments to the constructor. Map a service name to the
+        // class name.
+        'invokables' => [
+            // Fully\Qualified\InterfaceName::class => Fully\Qualified\ClassName::class,
         ],
-        'invokables'         => [
-            GraphQL\Middleware\Context\RequestContext::class,
-        ],
-        'factories'          => [
-            Application\Health\HealthHandler::class => Application\Health\HealthHandlerFactory::class,
+        // Use 'factories' for services provided by callbacks/factory classes.
+        'factories' => [
+            // Fully\Qualified\ClassName::class => Fully\Qualified\FactoryName::class,
         ],
     ],
 ];

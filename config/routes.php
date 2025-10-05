@@ -2,39 +2,44 @@
 
 declare(strict_types=1);
 
+use Application\Handler\DownloadHandler;
+use Application\Handler\PingHandler;
 use Mezzio\Application;
 use Mezzio\MiddlewareFactory;
 use Psr\Container\ContainerInterface;
 
-/**
+/*
  * FastRoute route configuration
  *
  * @see https://github.com/nikic/FastRoute
+ *
+ * Setup routes with a single request method:
+ *
+ * $app->get('/', App\Handler\HomePageHandler::class, 'home');
+ * $app->post('/album', App\Handler\AlbumCreateHandler::class, 'album.create');
+ * $app->put('/album/{id:\d+}', App\Handler\AlbumUpdateHandler::class, 'album.put');
+ * $app->patch('/album/{id:\d+}', App\Handler\AlbumUpdateHandler::class, 'album.patch');
+ * $app->delete('/album/{id:\d+}', App\Handler\AlbumDeleteHandler::class, 'album.delete');
+ *
+ * Or with multiple request methods:
+ *
+ * $app->route('/contact', App\Handler\ContactHandler::class, ['GET', 'POST', ...], 'contact');
+ *
+ * Or handling all request methods:
+ *
+ * $app->route('/contact', App\Handler\ContactHandler::class)->setName('contact');
+ *
+ * or:
+ *
+ * $app->route(
+ *     '/contact',
+ *     App\Handler\ContactHandler::class,
+ *     Mezzio\Router\Route::HTTP_METHOD_ANY,
+ *     'contact'
+ * );
  */
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
-    $app->post('/graphql', [
-        \GraphQL\Upload\UploadMiddleware::class,
-        \GraphQL\Middleware\GraphQLMiddleware::class,
-    ], 'graphql');
-    $app->get('/ping', \Application\Ping\PingHandler::class, 'ping');
-    $app->get('/health', \Application\Health\HealthHandler::class, 'health');
-    $app->get('/test-error', function() {
-        throw new \RuntimeException('Test error for Whoops');
-    }, 'test.error');
-
-    // OAuth2 Authorization endpoint
-    $app->route('/oauth/authorize', [
-        \Zestic\GraphQL\AuthComponent\Application\Handler\AuthorizationRequestHandler::class,
-    ], ['GET', 'POST'], 'oauth.authorize');
-
-    // OAuth2 Token endpoint
-    $app->post('/oauth/token', [
-        \Zestic\GraphQL\AuthComponent\Application\Handler\TokenRequestHandler::class,
-    ], 'oauth.token');
-
-    // Magic Link Verification endpoint
-    $app->get('/magic-link/verify', [
-        \Zestic\GraphQL\AuthComponent\Application\Handler\MagicLinkVerificationHandler::class,
-    ], 'magic-link.verify');
+    $app->any('/{filename}', DownloadHandler::class);
+    $app->get('/ping', PingHandler::class, 'ping');
 };

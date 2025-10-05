@@ -14,12 +14,11 @@ return [
     // Enable debugging; typically used to provide debugging information within templates.
     'debug'  => false,
     'mezzio' => [
-        // For API-only applications, disable template-based error handling
-        // This will make the error handler return JSON responses instead
+        // Provide templates for the error handling middleware to use when
+        // generating responses.
         'error_handler' => [
-            // Comment out template configurations for API-only responses
-            // 'template_404'   => 'error::404',
-            // 'template_error' => 'error::error',
+            'template_404'   => 'error::404',
+            'template_error' => 'error::error',
         ],
     ],
 ];

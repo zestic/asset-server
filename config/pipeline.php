@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use Mezzio\Application;
-use Mezzio\Cors\Middleware\CorsMiddleware;
 use Mezzio\Handler\NotFoundHandler;
 use Mezzio\Helper\ServerUrlMiddleware;
 use Mezzio\Helper\UrlHelperMiddleware;
@@ -14,11 +13,9 @@ use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Mezzio\Router\Middleware\MethodNotAllowedMiddleware;
 use Mezzio\Router\Middleware\RouteMiddleware;
-use Middlewares\AccessLog;
-use Middlewares\Uuid;
 use Psr\Container\ContainerInterface;
 
-/**
+/*
  * Setup middleware pipeline:
  */
 
@@ -26,37 +23,6 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // The error handler should be the first (most outer) middleware to catch
     // all Exceptions.
     $app->pipe(ErrorHandler::class);
-    $app->pipe(CorsMiddleware::class);
-
-    // Add UUID for request tracing
-    $app->pipe(new Uuid());
-
-    // Add comprehensive request/response logging
-    $accessLogger = $container->get('logger.access');
-    $accessLog    = (new AccessLog($accessLogger))
-        ->format(AccessLog::FORMAT_COMBINED)
-        ->context(function ($request, $response) {
-            $context = [
-                'request_id' => $request->getHeaderLine('X-Uuid'),
-                'user_agent' => $request->getHeaderLine('User-Agent'),
-            ];
-
-            // Add GraphQL operation info if available
-            if ($request->getMethod() === 'POST' && str_contains($request->getUri()->getPath(), 'graphql')) {
-                $body = json_decode((string) $request->getBody(), true);
-                if (isset($body['query'])) {
-                    // Extract operation name from GraphQL query
-                    if (preg_match('/(?:query|mutation|subscription)\s+(\w+)/', $body['query'], $matches)) {
-                        $context['graphql_operation'] = $matches[1];
-                    }
-                    $context['graphql_variables'] = ! empty($body['variables']) ? 'present' : 'none';
-                }
-            }
-
-            return $context;
-        });
-
-    $app->pipe($accessLog);
     $app->pipe(ServerUrlMiddleware::class);
 
     // Pipe more middleware here that you want to execute on every request:

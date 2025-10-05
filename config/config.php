@@ -13,15 +13,7 @@ $cacheConfig = [
 ];
 
 $aggregator = new ConfigAggregator([
-    \Mezzio\Twig\ConfigProvider::class,
-    \Xaddax\WebonyxMiddleware\ConfigProvider::class,
     \Zestic\Flysystem\ConfigProvider::class,
-    \Zestic\GraphQL\AuthComponent\Application\ConfigProvider::class,
-    \Netglue\PsrContainer\Messenger\ConfigProvider::class,
-    \Netglue\PsrContainer\Messenger\FailureCommandsConfigProvider::class,
-    \Netglue\PsrContainer\Messenger\DefaultEventBusConfigProvider::class,
-    \Netglue\PsrContainer\Messenger\DefaultCommandBusConfigProvider::class,
-    \Communication\ConfigProvider::class,
     \Mezzio\Tooling\ConfigProvider::class,
     \Mezzio\Router\FastRouteRouter\ConfigProvider::class,
     \Laminas\HttpHandlerRunner\ConfigProvider::class,
