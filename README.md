@@ -71,10 +71,6 @@ docker compose exec asset-server composer test         # Unit tests
 docker compose exec asset-server composer static-analysis  # Static analysis
 ```
 
-## Health Check
-
-The `/health` endpoint returns a simple JSON status for the server.
-
 ## Troubleshooting
 
 1. Ensure Docker is running and containers are healthy:
