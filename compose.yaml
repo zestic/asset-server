@@ -4,7 +4,8 @@ services:
       context: .
       dockerfile: docker/frankenphp/Dockerfile.frankenphp
     ports:
-      - "8188:80"
+      - "80:80"
+      - "443:443"
     volumes:
       - .:/app
     environment:
