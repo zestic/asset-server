@@ -43,6 +43,7 @@
         "monolog/monolog": "*",
         "nesbot/carbon": "^3.0",
         "ramsey/uuid": "^4.7",
+        "sentry/sentry": "^4.16",
         "zestic/flysystem2-component": "^0.4.0"
     },
     "require-dev": {

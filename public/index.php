@@ -50,5 +50,13 @@ if (getenv('APP_ENV') !== 'production') {
     $pipeline($app, $factory, $container);
     $routes($app, $factory, $container);
 
-    $app->run();
+    try {
+        $app->run();
+    } catch (\Throwable $exception) {
+        // Log the exception using Sentry
+        \Sentry\captureException($exception);
+        throw $exception;
+    }
+
+    Sentry\captureLastError();
 })();
