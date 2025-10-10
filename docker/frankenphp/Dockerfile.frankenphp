@@ -39,8 +39,10 @@ RUN composer run-script post-install-cmd --no-dev || true
 # Copy FrankenPHP configuration
 COPY docker/frankenphp/Caddyfile /etc/caddy/Caddyfile
 
-# Copy PHP development configuration
-COPY docker/frankenphp/php-dev.ini /usr/local/etc/php/conf.d/99-dev.ini
+
+# Use build argument to select environment config
+ARG APP_ENV=development
+COPY docker/frankenphp/php-${APP_ENV}.ini /usr/local/etc/php/conf.d/99-env.ini
 
 # Set proper permissions
 RUN chown -R www-data:www-data /app \
