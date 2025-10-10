@@ -9,12 +9,12 @@ services:
     volumes:
       - .:/app
     environment:
-      - PHP_IDE_CONFIG=serverName=asset-server
       - APP_ENV=${APP_ENV:-development}
       - CADDY_GLOBAL_OPTIONS=${CADDY_GLOBAL_OPTIONS:-}
       - FRANKENPHP_CONFIG=${FRANKENPHP_CONFIG:-}
       - SERVER_NAME=${SERVER_NAME:-:80}
       # Xdebug configuration
+      - PHP_IDE_CONFIG=serverName=asset-server
       - XDEBUG_MODE=${XDEBUG_MODE:-debug,develop}
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST:-host.docker.internal}
       - XDEBUG_CLIENT_PORT=${XDEBUG_CLIENT_PORT:-9003}

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "81f2adc8eb901a21ef3e38ab2a11d49f",
+    "content-hash": "ce799acc307b7a984f0769d00b968577",
     "packages": [
         {
             "name": "actiophp/actio",
