@@ -14,8 +14,10 @@ RUN apt-get update && apt-get install -y \
     pdo_pgsql \
     intl \
     xsl \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug \
+    # Only install Xdebug in dev environment
+    && if [ "$APP_ENV" = "dev" ]; then \
+        pecl install xdebug && docker-php-ext-enable xdebug; \
+    fi \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
@@ -38,7 +40,6 @@ RUN composer run-script post-install-cmd --no-dev || true
 
 # Copy FrankenPHP configuration
 COPY docker/frankenphp/Caddyfile /etc/caddy/Caddyfile
-
 
 # Use build argument to select environment config
 ARG APP_ENV=development
