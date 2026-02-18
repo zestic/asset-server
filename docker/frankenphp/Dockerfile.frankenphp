@@ -1,19 +1,26 @@
 FROM dunglas/frankenphp:php8.4
 
+ARG APP_ENV=dev
+
 # Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libicu-dev \
     libxslt1-dev \
     libxml2-dev \
+    libfreetype-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
     git \
     unzip \
     curl \
-    && docker-php-ext-install \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
     pdo \
     pdo_pgsql \
     intl \
     xsl \
+    gd \
     # Only install Xdebug in dev environment
     && if [ "$APP_ENV" = "dev" ]; then \
         pecl install xdebug && docker-php-ext-enable xdebug; \
@@ -42,7 +49,6 @@ RUN composer run-script post-install-cmd --no-dev || true
 COPY docker/frankenphp/Caddyfile /etc/caddy/Caddyfile
 
 # Use build argument to select environment config
-ARG APP_ENV=development
 COPY docker/frankenphp/php-${APP_ENV}.ini /usr/local/etc/php/conf.d/99-env.ini
 
 # Set proper permissions

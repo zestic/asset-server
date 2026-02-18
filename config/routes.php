@@ -40,6 +40,6 @@ use Psr\Container\ContainerInterface;
  */
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
-    $app->any('/{filename}', DownloadHandler::class);
     $app->get('/ping', PingHandler::class, 'ping');
+    $app->any('/{filename}', DownloadHandler::class);
 };
