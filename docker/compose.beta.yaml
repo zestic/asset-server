@@ -1,0 +1,17 @@
+services:
+  asset-server:
+    build:
+      context: .
+      dockerfile: docker/frankenphp/Dockerfile.frankenphp
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - .:/app
+    environment:
+      - APP_ENV=beta
+      - SERVER_NAME=asset.xddx.dev
+    env_file: /opt/xaddax/asset-server.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
