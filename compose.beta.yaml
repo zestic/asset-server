@@ -8,10 +8,11 @@ services:
       - "443:443"
     volumes:
       - .:/app
+    env_file: .env
     environment:
       - APP_ENV=beta
       - SERVER_NAME=asset.xddx.dev
-    env_file: /opt/xaddax/asset-server.env
+    env_file: /opt/xaddax/asset-server/.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
